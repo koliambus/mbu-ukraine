@@ -67,13 +67,12 @@ HTTPCACHE_EXPIRATION_SECS = 0
 HTTPCACHE_DIR = "httpcache"
 HTTPCACHE_IGNORE_HTTP_CODES = [403, 404, 429, 502, 408, 503, 301, 302, 500]
 
-MONGODB_HOST = quote_plus(get_env_str("MONGODB_HOST", "cluster0-shard-00-00-cl2ou.mongodb.net"))
+MONGODB_HOST = quote_plus(get_env_str("MONGODB_HOST", "localhost"))
 MONGODB_PORT = get_env_int("MONGODB_PORT", 27017)
-MONGODB_USERNAME = quote_plus(get_env_str("MONGODB_USERNAME", "scrapy"))
-MONGODB_PASSWORD = quote_plus(get_env_str("MONGODB_PASSWORD", "scrapy"))
+MONGODB_USERNAME = quote_plus(get_env_str("MONGODB_USERNAME", ""))
+MONGODB_PASSWORD = quote_plus(get_env_str("MONGODB_PASSWORD", ""))
 MONGODB_AUTH_DB = get_env_str("MONGODB_AUTH_DB", "admin")
-MONGODB_DB = get_env_str("MONGODB_DB", "test")
-MONGODB_URI = get_env_str("MONGODB_URI", "mongodb+srv://scrapy:scrapy@cluster0-cl2ou.mongodb.net/test?retryWrites=true&w=majority")
+MONGODB_DB = get_env_str("MONGODB_DB", "ragoogle_spiders")
 MONGODB_CONNECTION_POOL_KWARGS = {}
 
 HTTPCACHE_STORAGE = "scrapy_httpcache.extensions.httpcache_storage.MongoDBCacheStorage"
@@ -84,7 +83,6 @@ HTTPCACHE_MONGODB_PASSWORD = MONGODB_PASSWORD
 HTTPCACHE_MONGODB_CONNECTION_POOL_KWARGS = MONGODB_CONNECTION_POOL_KWARGS
 HTTPCACHE_MONGODB_AUTH_DB = MONGODB_AUTH_DB
 HTTPCACHE_MONGODB_DB = MONGODB_DB
-HTTPCACHE_MONGODB_URI = MONGODB_URI
 HTTPCACHE_MONGODB_COLL = get_env_str("HTTPCACHE_MONGODB_COLL", "cache")
 
 
