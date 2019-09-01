@@ -8,6 +8,11 @@ class KyivSpider(scrapy.Spider):
     name = "kga_gov_ua"
     allowed_domains = ["kga.gov.ua"]
     start_urls = ["http://kga.gov.ua/table/"]
+    custom_settings = {
+        # specifies exported fields and order
+        'FEED_EXPORT_FIELDS': ["order_no", "order_date", "customer", "obj", "address", "changes", "cancellation",
+                               "scan_url"],
+    }
 
     def parse(self, response):
         for row in response.css("table#droptablesTbl4 tbody tr"):
@@ -19,8 +24,7 @@ class KyivSpider(scrapy.Spider):
             l.add_css("address", "td:nth-child(5)::text")
             l.add_css("changes", "td:nth-child(6)::text")
             l.add_css("cancellation", "td:nth-child(7)::text")
-            
+
             url = row.css("td:nth-child(8) a::attr(href)").extract_first()
             l.add_value("scan_url", response.urljoin(url))
             yield l.load_item()
-

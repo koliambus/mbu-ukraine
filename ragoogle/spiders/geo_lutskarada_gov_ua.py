@@ -9,6 +9,11 @@ class LutskSpider(scrapy.Spider):
     name = "geo_lutskarada_gov_ua"
     allowed_domains = ["geo.lutskrada.gov.ua"]
     start_urls = ["http://geo.lutskrada.gov.ua/ua/register_mc/page=1"]
+    custom_settings = {
+        # specifies exported fields and order
+        'FEED_EXPORT_FIELDS': ["order_no", "order_date", "customer", "obj", "address", "changes", "cadastre_number",
+                               "document_status", "scan_url", "map_url"],
+    }
 
     def parse(self, response):
         for row in response.css("table.table.table-striped.small tbody tr"):

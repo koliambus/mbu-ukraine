@@ -11,6 +11,11 @@ class RivneSpider(scrapy.Spider):
     allowed_domains = ["geo.rv.ua"]
     start_urls = ["https://geo.rv.ua/ua/reestr-mistobudivnih-umov-ta-obmejen-do/page=1",
                   "https://geo.rv.ua/ua/reestr-mistobudivnih-umov-ta-obmejen-ta-budivelnih-pasportiv/page=1"]
+    custom_settings = {
+        # specifies exported fields and order
+        'FEED_EXPORT_FIELDS': ["order_no", "order_date", "customer", "obj", "address", "cadastre_number",
+                               "document_status", "scan_url", "map_url"],
+    }
 
     def parse(self, response):
         for row in response.css("table.table.table-striped.small tbody tr"):

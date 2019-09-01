@@ -8,6 +8,11 @@ class LvivSpider(scrapy.Spider):
     name = "mbk_city_adm_lviv_ua"
     allowed_domains = ["mbk.city-adm.lviv.ua"]
     start_urls = ["https://mbk.city-adm.lviv.ua/ua/register_mc"]
+    custom_settings = {
+        # specifies exported fields and order
+        'FEED_EXPORT_FIELDS': ["order_no", "order_date", "customer", "obj", "address", "changes", "cancellation",
+                               "scan_url"],
+    }
 
     def parse(self, response):
         for row in response.css("table.table.table-bordered tbody tr"):
