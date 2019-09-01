@@ -1,5 +1,6 @@
 # -*- coding: utf-8 -*-
 import scrapy
+import re
 from ragoogle.items.geo_lutskarada_gov_ua import MbuItem
 from ragoogle.loaders import StripJoinItemLoader
 
@@ -28,18 +29,22 @@ class LutskSpider(scrapy.Spider):
             l.add_value("map_url", response.urljoin(map_url))
             yield l.load_item()
 
-        page_selector = "/page="
+        # if 'Next' page label present continue crawling
+        if response.css('ul.pagination li a[aria-label=Next]').get():
+            yield scrapy.Request(self.get_next_page(response), callback=self.parse)
+
+    @staticmethod
+    def get_next_page(response):
+        page_selector = "/page=([0-9].*)"
         current_page = 1
         base_url = response.url
         request_url = response.url
 
         # first page without "/page="
-        if request_url.find(page_selector) != -1:
-            current_page = request_url[request_url.find(page_selector) + len(page_selector):]
-            base_url = request_url[:request_url.find(page_selector)]
+        selected_pagination = re.search(page_selector, request_url)
+        if selected_pagination:
+            current_page = selected_pagination.group(1)
+            base_url = request_url[:selected_pagination.span()[0]]
 
-        # if not the last page
-        if response.css('ul.pagination li a::attr(aria-label)').getall()[-1] == "Next":
-            next_page = base_url + "/page=" + str(int(current_page) + 1)
-            next_page = response.urljoin(next_page)
-            yield scrapy.Request(next_page, callback=self.parse)
+        next_page = base_url + "/page=" + str(int(current_page) + 1)
+        return response.urljoin(next_page)
