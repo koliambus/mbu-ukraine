@@ -7,7 +7,7 @@ from ragoogle.loaders import StripJoinItemLoader
 class LutskSpider(scrapy.Spider):
     name = "geo_lutskarada_gov_ua"
     allowed_domains = ["geo.lutskrada.gov.ua"]
-    start_urls = ["http://geo.lutskrada.gov.ua/ua/register_mc/page=57"]
+    start_urls = ["http://geo.lutskrada.gov.ua/ua/register_mc/page=1"]
 
     def parse(self, response):
         for row in response.css("table.table.table-striped.small tbody tr"):
