@@ -107,10 +107,7 @@ class ZaporizhiaSpider(scrapy.Spider):
                 yield l.load_item()
 
         # check if all consecutive orders where loaded
-        missed_order_numbers = []
-        for n in range(max(loaded_order_numbers)):
-            if loaded_order_numbers.count(n + 1) == 0:
-                missed_order_numbers.append(n + 1)
+        missed_order_numbers = {*range(1, max(loaded_order_numbers))}.difference(loaded_order_numbers)
 
         if missed_order_numbers:
             self.logger.warning("Missed order numbers: %s", missed_order_numbers)
