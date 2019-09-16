@@ -1,5 +1,6 @@
 # -*- coding: utf-8 -*-
 import scrapy
+import re
 from ragoogle.items.mkrada_gov_ua import MbuItem
 from ragoogle.loaders import StripJoinItemLoader
 
@@ -19,13 +20,12 @@ class MykolaivSpider(scrapy.Spider):
             l = StripJoinItemLoader(item=MbuItem(), selector=row)
 
             # skip empty lines
-            date_order = row.css("td:nth-child(2) p span::text, td:nth-child(2) span::text, td:nth-child(2)::text").get()
+            date_order = ''.join(row.css("td:nth-child(2) p span::text, td:nth-child(2) span::text, td:nth-child(2)::text").getall())
             if not date_order or not date_order.strip(): continue
 
             # number_in_order is unique only per year
             l.add_css("number_in_order", "td:nth-child(1) p span::text, td:nth-child(1) span::text, td:nth-child(1)::text")
-            l.add_css("order_no", "td:nth-child(2) p span::text, td:nth-child(2) span::text, td:nth-child(2)::text",
-                      re=r"^\s?№? ?(.*)\s?в?[іd]")
+            l.add_value("order_no", re.search('^\\s?№? ?(.*)\\s?(в?ід|dsl)', date_order).group(1))
             l.add_css("order_date", "td:nth-child(2) p span::text, td:nth-child(2) span::text, td:nth-child(2)::text",
                       re=r"(\d{1,2}[\. /]?\d{1,2}[\. /]?\d{2,4})\s*$")
             l.add_css("customer", "td:nth-child(3) span::text, td:nth-child(3)::text")
