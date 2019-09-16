@@ -22,8 +22,8 @@ class DniproSpider(scrapy.Spider):
 
             l = StripJoinItemLoader(item=MbuItem(), selector=row)
             l.add_css("number_in_order", "td:nth-child(1)::text")
-            l.add_css("order_no", "td:nth-child(2) p:nth-child(2)::text", re=r"№ ?(.*)$")
-            l.add_css("order_date", "td:nth-child(2) p:nth-child(1)::text", re=r"^[\d.]*")
+            l.add_css("order_no", "td:nth-child(2) p::text, td:nth-child(2)::text", re=r"№ ?(.*)\s?$")
+            l.add_css("order_date", "td:nth-child(2) p:nth-child(1)::text, td:nth-child(2)::text", re=r"^[\d.]*")
             l.add_css("customer", "td:nth-child(3)::text")
             l.add_css("obj", "td:nth-child(4)::text")
             l.add_css("address", "td:nth-child(5)::text")

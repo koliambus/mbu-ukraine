@@ -19,7 +19,7 @@ class PoltavaSpider(scrapy.Spider):
             # skip first as header
             if i == 0: continue
             l = StripJoinItemLoader(item=MbuItem(), selector=row)
-            l.add_css("order_no", "td:nth-child(1)::text", re=r"([\d]+)$")
+            l.add_css("order_no", "td:nth-child(1)::text", re=r" (.*)$")
             l.add_css("order_date", "td:nth-child(1)::text", re=r"^[\d-]*")
             l.add_css("customer", "td:nth-child(2)::text")
             l.add_css("obj", "td:nth-child(3)::text")
