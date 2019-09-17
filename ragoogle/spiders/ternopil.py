@@ -17,15 +17,15 @@ class TernopilSpider(scrapy.Spider):
     }
 
     def parse(self, response):
-        # second table in without data
-        for index, row in enumerate(response.css("div.post-body>table")[0].xpath("./tbody/tr")):
+        # only first table with data
+        for index, row in enumerate(response.css("div.post-body>table:first-of-type>tbody>tr")):
 
             # first two are headers, skip
             if index < 2: continue
 
             l = StripJoinItemLoader(item=MbuItem(), selector=row)
             # because of errors in html, get td from current root only
-            l.add_xpath("number_in_order", "./td[position()=1]/span/text()")
+            l.add_xpath("number_in_order", "./td[position()=1]/span/text()|./td[position()=1]/p/span/text()", re=r"(\d+)\s?")
             l.add_css("order_no", "td:nth-child(2) p span::text, td:nth-child(2) span::text", re=r"^\s*№ ?(.*)\s?від")
             l.add_css("order_date", "td:nth-child(2) p span::text, td:nth-child(2) span::text", re=r"(\d{1,2}[\. /]?\d{1,2}[\. /]?\d{2,4})[\sр\.]*$")
             l.add_css("customer", "td:nth-child(3) p span::text, td:nth-child(3) span::text")
