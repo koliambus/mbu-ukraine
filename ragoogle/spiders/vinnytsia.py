@@ -12,8 +12,7 @@ class VinnytsiaSpider(scrapy.Spider):
     start_urls = ["https://www.vmr.gov.ua/Executives/SitePages/ArchitectureRegistry.aspx"]
     custom_settings = {
         # specifies exported fields and order
-        'FEED_EXPORT_FIELDS': ["order_no", "order_date", "customer", "obj", "address", "changes", "cancellation",
-                               "scan_url"],
+        'FEED_EXPORT_FIELDS': ["number_in_order", "order_no", "decree_no", "order_date", "customer", "obj", "address", "changes", "cancellation"],
     }
 
     def parse(self, response):
