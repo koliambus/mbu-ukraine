@@ -57,12 +57,8 @@ class CherkasySpider(scrapy.Spider):
                 url=url,
                 headers=headers,
                 body='&'.join(body_fields),
-                callback=self.parse_filtered,
-                errback=self.catch_error
+                callback=self.parse_filtered
             )
-
-    def catch_error(self, response):
-        print(response)
 
     def parse_filtered(self, response):
         jsonresponse = json.loads(response.body_as_unicode())
