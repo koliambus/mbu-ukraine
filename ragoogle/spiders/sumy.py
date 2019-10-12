@@ -19,8 +19,11 @@ class SumySpider(scrapy.Spider):
     def parse(self, response):
         for i, row in enumerate(response.css("table tbody tr")):
             # skip styled as header
-            if row.css("td:nth-child(1) p strong").get(): continue;
+            if row.css("td:nth-child(1) p strong").get():
+                self.logger.debug("skipped row : {}".format(row))
+                continue
 
+            self.logger.debug("parsed row : {}".format(row))
             l = StripJoinItemLoader(item=MbuItem(), selector=row)
             l.add_css("order_no", "td:nth-child(1) a.add-google-doc::text", re=r"№\s?(.+)$")
             l.add_css("order_date", "td:nth-child(1) a.add-google-doc::text", re=r"([\d\.]*) №")

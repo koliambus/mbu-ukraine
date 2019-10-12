@@ -23,6 +23,7 @@ class KharkivSpider(scrapy.Spider):
     def parse(self, response):
         jsonresponse = json.loads(response.body_as_unicode())
         for row in jsonresponse["aaData"]:
+            self.logger.debug("parsed row : {}".format(row))
             l = StripJoinItemLoader(item=MbuItem())
             l.add_value("number_in_order", row[0])
             l.add_value("order_no", re.search("№ ?(.*) ?(ві|от)", row[1]).group(1) if row[1] else None)

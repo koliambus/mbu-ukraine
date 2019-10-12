@@ -18,21 +18,20 @@ class ZaporizhiaSpider(scrapy.Spider):
 
     def parse(self, response):
         loaded_order_numbers = []
-        for idx, row in enumerate(response.css("table tbody tr")):
+        for index, row in enumerate(response.css("table tbody tr")):
             # first and second are headers, skip
-            if idx == 0 or idx == 1: continue
+            if index == 0 or index == 1:
+                self.logger.debug("skipped index = {}, row : {}".format(index, row))
+                continue
 
-            # search for header's texts to skip row
-            # if row.css("td:nth-child(1) p span strong::text").get() == "№": continue
-            # if row.css("td:nth-child(1) p span strong::text").get() == "Дата": continue
-
+            self.logger.debug("parse index = {}, row : {}".format(index, row))
             orders_in_row = len(row.css("td:nth-child(3) p").getall())
 
             if orders_in_row == 0:
                 orders_in_row = len(row.css("td:nth-child(3) span"))
 
             # each row is sub divided for main order and it's changes
-            for n in range(orders_in_row):
+            for order_in_row in range(orders_in_row):
                 l = StripJoinItemLoader(item=MbuItem(), selector=row)
                 l.add_value("number_in_order",
                             self.get_first_existed(row,
@@ -41,56 +40,56 @@ class ZaporizhiaSpider(scrapy.Spider):
 
                 l.add_value("order_no",
                             self.get_first_existed(row,
-                                                   "td:nth-child(3) p:nth-child(" + str(n + 1) + ") span::text",
+                                                   "td:nth-child(3) p:nth-child(" + str(order_in_row + 1) + ") span::text",
                                                    "td:nth-child(3) p:nth-child(1) span::text",
-                                                   "td:nth-child(3) span:nth-child(" + str(n + 1) + ")::text",
+                                                   "td:nth-child(3) span:nth-child(" + str(order_in_row + 1) + ")::text",
                                                    "td:nth-child(3) span:nth-child(1)::text"))
 
                 l.add_value("order_date",
                             self.get_first_existed(row,
-                                                   "td:nth-child(2) p:nth-child(" + str(n + 1) + ") span::text",
+                                                   "td:nth-child(2) p:nth-child(" + str(order_in_row + 1) + ") span::text",
                                                    "td:nth-child(2) p:nth-child(1) span::text",
-                                                   "td:nth-child(2) span:nth-child(" + str(n + 1) + ")::text",
+                                                   "td:nth-child(2) span:nth-child(" + str(order_in_row + 1) + ")::text",
                                                    "td:nth-child(2) span:nth-child(1) span::text"))
 
                 l.add_value("customer",
                             self.get_first_existed(row,
-                                                   "td:nth-child(4) p:nth-child(" + str(n + 1) + ") span::text",
+                                                   "td:nth-child(4) p:nth-child(" + str(order_in_row + 1) + ") span::text",
                                                    "td:nth-child(4) p:nth-child(1) span::text",
-                                                   "td:nth-child(4) span:nth-child(" + str(n + 1) + ")::text",
+                                                   "td:nth-child(4) span:nth-child(" + str(order_in_row + 1) + ")::text",
                                                    "td:nth-child(4) span:nth-child(1)::text"))
 
                 l.add_value("obj",
                             self.get_first_existed(row,
-                                                   "td:nth-child(5) p:nth-child(" + str(n + 1) + ") span::text",
+                                                   "td:nth-child(5) p:nth-child(" + str(order_in_row + 1) + ") span::text",
                                                    "td:nth-child(5) p:nth-child(1) span::text",
-                                                   "td:nth-child(5) span:nth-child(" + str(n + 1) + ")::text",
+                                                   "td:nth-child(5) span:nth-child(" + str(order_in_row + 1) + ")::text",
                                                    "td:nth-child(5) span:nth-child(1)::text"))
 
                 l.add_value("address",
                             self.get_first_existed(row,
-                                                   "td:nth-child(6) p:nth-child(" + str(n + 1) + ") span::text",
+                                                   "td:nth-child(6) p:nth-child(" + str(order_in_row + 1) + ") span::text",
                                                    "td:nth-child(6) p:nth-child(1) span::text",
-                                                   "td:nth-child(6) span:nth-child(" + str(n + 1) + ")::text",
+                                                   "td:nth-child(6) span:nth-child(" + str(order_in_row + 1) + ")::text",
                                                    "td:nth-child(6) span:nth-child(1)::text"))
 
                 l.add_value("changes",
                             self.get_first_existed(row,
-                                                   "td:nth-child(7) p:nth-child(" + str(n + 1) + ") span::text",
+                                                   "td:nth-child(7) p:nth-child(" + str(order_in_row + 1) + ") span::text",
                                                    "td:nth-child(7) p:nth-child(1) span::text",
-                                                   "td:nth-child(7) span:nth-child(" + str(n + 1) + ")::text",
+                                                   "td:nth-child(7) span:nth-child(" + str(order_in_row + 1) + ")::text",
                                                    "td:nth-child(7) span:nth-child(1)::text"))
                 l.add_value("cancellation",
                             self.get_first_existed(row,
-                                                   "td:nth-child(8) p:nth-child(" + str(n + 1) + ") span::text",
+                                                   "td:nth-child(8) p:nth-child(" + str(order_in_row + 1) + ") span::text",
                                                    "td:nth-child(8) p:nth-child(1) span::text",
-                                                   "td:nth-child(8) span:nth-child(" + str(n + 1) + ")::text",
+                                                   "td:nth-child(8) span:nth-child(" + str(order_in_row + 1) + ")::text",
                                                    "td:nth-child(8) span:nth-child(1)::text"))
 
                 url = self.get_first_existed(row,
-                                             "td:nth-child(9) p:nth-child(" + str(n + 1) + ") span a::attr(href)",
+                                             "td:nth-child(9) p:nth-child(" + str(order_in_row + 1) + ") span a::attr(href)",
                                              "td:nth-child(9) p:nth-child(1) span a::attr(href)",
-                                             "td:nth-child(9) a:nth-child(" + str(n + 1) + ")::attr(href)",
+                                             "td:nth-child(9) a:nth-child(" + str(order_in_row + 1) + ")::attr(href)",
                                              "td:nth-child(9) a:nth-child(1)::attr(href)")
 
                 l.add_value("scan_url", response.urljoin(url))

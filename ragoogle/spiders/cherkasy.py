@@ -33,6 +33,7 @@ class CherkasySpider(scrapy.Spider):
             'Connection': 'keep-alive'
         }
         search_object = json.loads(response.css('script::text').re('Core.searchQuery = (.*);')[0])
+        self.logger.debug("search object = {}".format(search_object))
         for page in range(1, search_object['totalPages'] + 1):
             body_fields = [
                 'method=doSearch',
@@ -65,6 +66,7 @@ class CherkasySpider(scrapy.Spider):
         table = Selector(text=jsonresponse['table'])
 
         for row in table.css("tr"):
+            self.logger.debug("parse row : {}".format(row.get()))
             l = StripJoinItemLoader(item=MbuItem(), selector=row)
             l.add_css("order_no", "td:nth-child(1) strong::text")
             l.add_css("order_date", "td:nth-child(1)::text", re=r"([\d\.])+\s*№")

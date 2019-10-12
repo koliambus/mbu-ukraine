@@ -16,6 +16,7 @@ class UzhorodSpider(scrapy.Spider):
 
     def parse(self, response):
         for row in response.css("div.table-content-container div#orders div.one_order"):
+            self.logger.debug("parsed row : {}".format(row.get()))
             l = StripJoinItemLoader(item=MbuItem(), selector=row)
             l.add_css("order_date", "li.order_date::text")
             l.add_css("order_no", "li.order_number::text")
@@ -26,5 +27,7 @@ class UzhorodSpider(scrapy.Spider):
             l.add_css("cancellation", "li.reason_canc::text")
 
             url = row.css("li.download a::attr(href)").extract_first()
-            l.add_value("scan_url", response.urljoin(url))
+            if url:
+                l.add_value("scan_url", response.urljoin(url))
+
             yield l.load_item()

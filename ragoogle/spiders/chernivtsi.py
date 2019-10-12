@@ -18,16 +18,20 @@ class CSVChernivtsiSpider(CSVFeedSpider):
 
     # at first get link to csv file, then call super().parse to proceed with CSV parsing
     def parse(self, response):
+        dataset_url = response.css(
+            '#dataset-resources > ul > li:nth-child(1) > div > ul > li:nth-child(2) > a::attr(href)').get()
+        self.logger.info("parsed dataset url : {}".format(dataset_url))
         yield Request(
-            response.css(
-                '#dataset-resources > ul > li:nth-child(1) > div > ul > li:nth-child(2) > a::attr(href)').get(),
+            dataset_url,
             callback=super().parse
         )
 
     def adapt_response(self, response):
+        # encoding fixes
         return response.replace(body=response.body.decode('cp1251').encode('utf-8'), encoding='utf-8')
 
     def parse_row(self, response, row):
+        self.logger.debug("parse row : {}".format(row))
         l = StripJoinItemLoader(item=MbuItem())
         l.add_value("order_no", row['restrictionNumber '])  # space in the end is needed
         l.add_value("order_date", row['restrictionDate'])

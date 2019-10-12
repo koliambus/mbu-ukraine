@@ -16,6 +16,7 @@ class KyivSpider(scrapy.Spider):
 
     def parse(self, response):
         for row in response.css("table#droptablesTbl4 tbody tr"):
+            self.logger.debug("parse row : {}".format(row.get()))
             l = StripJoinItemLoader(item=MbuItem(), selector=row)
             l.add_css("order_no", "td:nth-child(2)::text", re=r"([\d]+)$")
             l.add_css("order_date", "td:nth-child(2)::text", re=r"^[\d.]*")
@@ -26,5 +27,7 @@ class KyivSpider(scrapy.Spider):
             l.add_css("cancellation", "td:nth-child(7)::text")
 
             url = row.css("td:nth-child(8) a::attr(href)").extract_first()
-            l.add_value("scan_url", response.urljoin(url))
+            if url:
+                l.add_value("scan_url", response.urljoin(url))
+
             yield l.load_item()

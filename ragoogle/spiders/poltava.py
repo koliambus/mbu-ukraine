@@ -17,7 +17,11 @@ class PoltavaSpider(scrapy.Spider):
     def parse(self, response):
         for i, row in enumerate(response.css("table tr")):
             # skip first as header
-            if i == 0: continue
+            if i == 0:
+                self.logger.debug("skipped row : {}".format(row.get()))
+                continue
+
+            self.logger.debug("parse row : {}".format(row.get()))
             l = StripJoinItemLoader(item=MbuItem(), selector=row)
             l.add_css("order_no", "td:nth-child(1)::text", re=r" (.*)$")
             l.add_css("order_date", "td:nth-child(1)::text", re=r"^[\d-]*")

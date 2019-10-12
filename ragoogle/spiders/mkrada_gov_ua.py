@@ -21,8 +21,11 @@ class MykolaivSpider(scrapy.Spider):
 
             # skip empty lines
             date_order = ''.join(row.css("td:nth-child(2) p span::text, td:nth-child(2) span::text, td:nth-child(2)::text").getall())
-            if not date_order or not date_order.strip(): continue
+            if not date_order or not date_order.strip():
+                self.logger.debug("skipped row : {}".format(row.get()))
+                continue
 
+            self.logger.debug("parse row : {}".format(row.get()))
             # number_in_order is unique only per year
             l.add_css("number_in_order", "td:nth-child(1) p span::text, td:nth-child(1) span::text, td:nth-child(1)::text")
             l.add_value("order_no", re.search('^\\s?№? ?(.*)\\s?(в?ід|dsl)', date_order).group(1))

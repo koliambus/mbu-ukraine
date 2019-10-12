@@ -17,6 +17,7 @@ class VinnytsiaSpider(scrapy.Spider):
 
     def parse(self, response):
         for row in response.css('table.ms-listviewtable tr[class^=building-registry-row]'):
+            self.logger.debug("parse row : {}".format(row))
             l = StripJoinItemLoader(item=MbuItem(), selector=row)
             l.add_css("order_no", "td:nth-child(1)::text")
             l.add_css("number_in_order", "td:nth-child(2)::text")
@@ -29,12 +30,15 @@ class VinnytsiaSpider(scrapy.Spider):
             l.add_css("cancellation", "td:nth-child(9) div::text")
 
             url = row.css("td:nth-child(10) a::attr(href)").extract_first()
-            l.add_value("scan_url", response.urljoin(url))
+            if url:
+                l.add_value("scan_url", response.urljoin(url))
+
             yield l.load_item()
 
         # get next page number href next to current inactive with span tag
         nextPageJs = response.xpath('//table[@class="ms-listviewtable"]//tr[@class="building-registry-pager"]//table/tr/td[.//span]/following-sibling::td[1]/a/@href')
         if len(nextPageJs):
+            self.logger.debug("next page action found : {}".format(nextPageJs))
             yield FormRequest.from_response(
                 response,
                 formname="aspnetForm",
@@ -47,20 +51,3 @@ class VinnytsiaSpider(scrapy.Spider):
                 dont_filter=True,
                 callback=self.parse
             )
-
-    def parse_results(self, response):
-        for row in response.css('table.ms-listviewtable tr[class^=building-registry-row]'):
-            l = StripJoinItemLoader(item=MbuItem(), selector=row)
-            l.add_css("order_no", "td:nth-child(1)::text")
-            l.add_css("number_in_order", "td:nth-child(2)::text")
-            l.add_css("order_date", "td:nth-child(3)::text")
-            l.add_css("decree_no", "td:nth-child(4)::text")
-            l.add_css("customer", "td:nth-child(5)::text")
-            l.add_css("obj", "td:nth-child(6)::text")
-            l.add_css("address", "td:nth-child(7)::text")
-            l.add_css("changes", "td:nth-child(8)::text")
-            l.add_css("cancellation", "td:nth-child(9)::text")
-
-            url = row.css("td:nth-child(10) a::attr(href)").extract_first()
-            l.add_value("scan_url", response.urljoin(url))
-            yield l.load_item()

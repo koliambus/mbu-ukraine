@@ -29,6 +29,7 @@ class ZhytomyrSpider(scrapy.spiders.CSVFeedSpider):
 
             # if row is not empty
             if row[1].value:
+                self.logger.debug("parse xls index : {}, row : {}".format(index, row))
                 order_no = row[0].value.replace('№', '').strip()
                 l = self.get_item(order_no)
 
@@ -41,6 +42,8 @@ class ZhytomyrSpider(scrapy.spiders.CSVFeedSpider):
                 l.add_value("address", row[3].value)
                 l.add_value("changes", row[7].value)
                 l.add_value("cancellation", row[8].value)
+            else:
+                self.logger.debug("skipped index : {}, row : {}".format(index, row))
 
         for item in self.item_loaders.values():
             yield item.load_item()
@@ -50,24 +53,25 @@ class ZhytomyrSpider(scrapy.spiders.CSVFeedSpider):
 
     def parse(self, response):
         for row in response.css(".docrowcontainer"):
-            order_no = "".join(row.css("div:nth-child(1)::text").re(r"№ ?(.*)")).strip()
-
-            if not order_no: continue
-
-            l = self.item_loaders[order_no]
-            l.selector = row
-
-            l.add_value("order_no", order_no)
-            l.add_xpath("order_date", "./@data-year")
-
             document_url = row.css("div:nth-child(2) a.docdownload::attr(href)").extract_first()
-            l.add_value("scan_url", response.urljoin(document_url))
 
             if document_url.endswith('.xls'):
-                yield response.follow(document_url, callback=self.parse_xls_and_flush, priority=10) # big priority to run last
+                self.logger.info("xls document found : {}".format(document_url))
+                yield response.follow(document_url, callback=self.parse_xls_and_flush, priority=10)  # big priority to run last
+            else:
+                self.logger.debug("parse site row : {}".format(row.get()))
+                order_no = "".join(row.css("div:nth-child(1)::text").re(r"№ ?(.*)")).strip()
+                l = self.get_item(order_no)
+                l.selector = row
+
+                l.add_value("order_no", order_no)
+                l.add_xpath("order_date", "./@data-year")
+
+                l.add_value("scan_url", response.urljoin(document_url))
 
         next_page_link = response.xpath('//*[@id="tp6"]//ul/li[@class="active"]/following-sibling::li[1]/a/@href').get()
         if next_page_link:
+            self.logger.debug("next page link : {}".format(next_page_link))
             yield response.follow(next_page_link, callback=self.parse)
 
     def get_item(self, order_no):
@@ -79,7 +83,7 @@ class ZhytomyrSpider(scrapy.spiders.CSVFeedSpider):
             self.item_loaders.keys()
         ))
 
-        if len(filtered_order) and filtered_order[0] != order_no:
-            print('filtered_order = ', filtered_order, ', order_no = ', order_no)
+        if len(filtered_order):
+            self.logger.debug('similar to order_no : {} found in loaders : {}'.format(order_no, filtered_order))
 
         return self.item_loaders[filtered_order[0] if len(filtered_order) else order_no]

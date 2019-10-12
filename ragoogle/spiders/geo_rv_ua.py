@@ -19,6 +19,7 @@ class RivneSpider(scrapy.Spider):
 
     def parse(self, response):
         for row in response.css("table.table.table-striped.small tbody tr"):
+            self.logger.debug("parse row : {}".format(row.get()))
             l = StripJoinItemLoader(item=MbuItem(), selector=row)
             l.add_css("order_no", "td:nth-child(1)::text")
             l.add_css("order_date", "td:nth-child(2)::text")
@@ -29,18 +30,20 @@ class RivneSpider(scrapy.Spider):
             l.add_css("document_status", "td:nth-child(7) span::text")
 
             document_url = row.css("td:nth-child(8) a::attr(href)").extract_first()
-            l.add_value("scan_url", response.urljoin(document_url))
+            if document_url:
+                l.add_value("scan_url", response.urljoin(document_url))
 
             map_url = row.css("td:nth-child(1) a::attr(href)").extract_first()
-            l.add_value("map_url", response.urljoin(map_url))
+            if map_url:
+                l.add_value("map_url", response.urljoin(map_url))
+
             yield l.load_item()
 
         # if 'Next' page label present continue crawling
         if response.css('ul.pagination li a[aria-label=Next]').get():
             yield scrapy.Request(self.get_next_page(response), callback=self.parse)
 
-    @staticmethod
-    def get_next_page(response):
+    def get_next_page(self, response):
         page_selector = "/page=([0-9].*)"
         current_page = 1
         base_url = response.url
@@ -53,4 +56,5 @@ class RivneSpider(scrapy.Spider):
             base_url = request_url[:selected_pagination.span()[0]]
 
         next_page = base_url + "/page=" + str(int(current_page) + 1)
+        self.logger.info("Calculated next page : [{}] from current : [{}]".format(next_page, response.url))
         return response.urljoin(next_page)

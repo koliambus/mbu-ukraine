@@ -22,6 +22,7 @@ class KhersonSpider(scrapy.Spider):
     def parse(self, response):
         jsonresponse = json.loads(response.body_as_unicode())
         for row in jsonresponse["aaData"]:
+            self.logger.debug("parse row : {}".format(row))
             l = StripJoinItemLoader(item=MbuItem())
             l.add_value("number_in_order", row[0])
             l.add_value("order_no", row[2])

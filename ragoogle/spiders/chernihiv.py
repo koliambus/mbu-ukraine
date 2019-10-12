@@ -18,12 +18,12 @@ class ChernihivSpider(scrapy.Spider):
     def parse(self, response):
         for index, row in enumerate(response.css("table>tbody>tr")):
 
-            # skip no data rows
-            if index < 5: continue
-
-            # skip empty lines
-            if not "".join(row.css("td::text, td span::text").getall()).strip():
+            # skip headers and rows with empty lines
+            if index < 5 and not "".join(row.css("td::text, td span::text").getall()).strip():
+                self.logger.debug("skipped index : {}, row : {}".format(index, row.get()))
                 continue
+
+            self.logger.debug("parse index : {}, row : {}".format(index, row.get()))
 
             l = StripJoinItemLoader(item=MbuItem(), selector=row)
             l.add_css("decree", "td:nth-child(1)::text")

@@ -16,6 +16,7 @@ class KropyvnytskyiSpider(scrapy.Spider):
 
     def parse(self, response):
         for row in response.xpath('//table/tbody/tr[count(td)=8 and not(./td//span/strong)]'):
+            self.logger.debug("parse row : {}".format(row.get()))
             l = StripJoinItemLoader(item=MbuItem(), selector=row)
             l.add_css("number_in_order", "td:nth-child(1) p::text, td:nth-child(1)::text")
             l.add_css("order_no", "td:nth-child(2) p:nth-child(1)::text, td:nth-child(2) p:nth-child(1) span::text", re=r"№\s?(\d+)")

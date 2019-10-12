@@ -16,6 +16,7 @@ class IvanoFrankivskSpider(scrapy.Spider):
 
     def parse(self, response):
         for row in response.css("table.table-registry tbody tr"):
+            self.logger.debug("parse row : {}".format(row.get()))
             l = StripJoinItemLoader(item=MbuItem(), selector=row)
             l.add_css("order_no", "td:nth-child(1) strong::text")
             l.add_css("order_date", "td:nth-child(1)::text")
@@ -35,4 +36,5 @@ class IvanoFrankivskSpider(scrapy.Spider):
 
         next_page = response.css('a.next.page-numbers::attr(href)').extract_first()
         if next_page:
+            self.logger.debug("follow next page : {}".format(next_page))
             yield response.follow(next_page)

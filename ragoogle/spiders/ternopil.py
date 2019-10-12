@@ -21,8 +21,11 @@ class TernopilSpider(scrapy.Spider):
         for index, row in enumerate(response.css("div.post-body>table:first-of-type>tbody>tr")):
 
             # first two are headers, skip
-            if index < 2: continue
+            if index < 2:
+                self.logger.debug("skipped row : {}".format(row))
+                continue
 
+            self.logger.debug("parse row : {}".format(row))
             l = StripJoinItemLoader(item=MbuItem(), selector=row)
             # because of errors in html, get td from current root only
             l.add_xpath("number_in_order", "./td[position()=1]/span/text()|./td[position()=1]/p/span/text()", re=r"(\d+)\s?")

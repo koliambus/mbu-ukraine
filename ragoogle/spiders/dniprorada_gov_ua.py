@@ -18,8 +18,11 @@ class DniproSpider(scrapy.Spider):
     def parse(self, response):
         for row in response.css("table tbody tr"):
             # first is header, skip
-            if row.css("td:nth-child(1)::text").get() == "№ з/п": continue
+            if row.css("td:nth-child(1)::text").get() == "№ з/п":
+                self.logger.debug("skiped row : {}".format(row.get()))
+                continue
 
+            self.logger.debug("parse row : {}".format(row.get()))
             l = StripJoinItemLoader(item=MbuItem(), selector=row)
             l.add_css("number_in_order", "td:nth-child(1)::text")
             l.add_css("order_no", "td:nth-child(2) p::text, td:nth-child(2)::text", re=r"№ ?(.*)\s?$")
@@ -31,7 +34,8 @@ class DniproSpider(scrapy.Spider):
             l.add_css("cancellation", "td:nth-child(7)::text")
 
             url = row.css("td:nth-child(8) a::attr(href)").extract_first()
-            l.add_value("scan_url", response.urljoin(url))
+            if url:
+                l.add_value("scan_url", response.urljoin(url))
 
             l.add_css("scan_no", "td:nth-child(8) a::text", re=r"№(.*) ?від")
             l.add_css("scan_date", "td:nth-child(8) a::text", re=r"від ?(.*)")

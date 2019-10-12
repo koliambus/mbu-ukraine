@@ -70,6 +70,7 @@ class OdessaSpider(scrapy.Spider):
     def parse(self, response):
         jsonresponse = json.loads(response.body_as_unicode())
         for attributes in jsonresponse['features']:
+            self.logger.debug("parse row : {}".format(attributes))
             attributes = attributes['attributes']
             l = StripJoinItemLoader(item=MbuItem())
             l.add_value("number_in_order", str(attributes['Kadastr2016.DBO.MBU.OBJECTID']))
@@ -98,10 +99,7 @@ class OdessaSpider(scrapy.Spider):
             if scan_urls:
                 l.add_value("scan_url", ",".join(scan_urls))
 
-            try:
-                yield l.load_item()
-            except:
-                print()
+            yield l.load_item()
 
     def get_address(self, attributes):
         address = ''
