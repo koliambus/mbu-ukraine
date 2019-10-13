@@ -22,10 +22,10 @@ class ZaporizhiaSpider(scrapy.Spider):
         for index, row in enumerate(response.css("table tbody tr")):
             # first and second are headers, skip
             if index == 0 or index == 1:
-                self.logger.debug("skipped index = {}, row : {}".format(index, row))
+                self.logger.debug("skipped index = {}, row : {}".format(index, row.get()))
                 continue
 
-            self.logger.debug("parse index = {}, row : {}".format(index, row))
+            self.logger.debug("parse index = {}, row : {}".format(index, row.get()))
             orders_in_row = len(row.css("td:nth-child(3) p").getall())
 
             if orders_in_row == 0:
@@ -39,12 +39,14 @@ class ZaporizhiaSpider(scrapy.Spider):
                                                    "td:nth-child(1) p span::text",
                                                    "td:nth-child(1) span::text"))
 
-                l.add_value("order_no",
-                            self.get_first_existed(row,
-                                                   "td:nth-child(3) p:nth-child(" + str(order_in_row + 1) + ") span::text",
-                                                   "td:nth-child(3) p:nth-child(1) span::text",
-                                                   "td:nth-child(3) span:nth-child(" + str(order_in_row + 1) + ")::text",
-                                                   "td:nth-child(3) span:nth-child(1)::text"))
+                order_no = row.css("td:nth-child(3) p:nth-child({}) span::text, td:nth-child(3) span:nth-child({})::text"
+                            .format(order_in_row + 1, order_in_row + 1)).get()
+
+                if not order_no:
+                    self.logger.debug("skipped {}th order in row, row index : {}, row : {}".format(order_in_row + 1, index, row.get()))
+                    continue
+
+                l.add_value("order_no", order_no)
 
                 l.add_value("order_date",
                             self.get_first_existed(row,
