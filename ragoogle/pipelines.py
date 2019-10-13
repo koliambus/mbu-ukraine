@@ -36,7 +36,7 @@ class MongoDBPipeline(object):
 
 class AddLocationNamePipeline(object):
     def process_item(self, item, spider):
-        if spider.location_name and item.fields.get('location_name') is not None:
+        if spider.location_name and item.fields.get('location_name') is not None and len(item.values()):
             item['location_name'] = spider.location_name
 
         return item

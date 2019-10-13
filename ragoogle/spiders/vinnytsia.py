@@ -19,7 +19,7 @@ class VinnytsiaSpider(scrapy.Spider):
 
     def parse(self, response):
         for row in response.css('table.ms-listviewtable tr[class^=building-registry-row]'):
-            self.logger.debug("parse row : {}".format(row))
+            self.logger.debug("parse row : {}".format(row.get()))
             l = StripJoinItemLoader(item=MbuItem(), selector=row)
             l.add_css("order_no", "td:nth-child(1)::text")
             l.add_css("number_in_order", "td:nth-child(2)::text")
