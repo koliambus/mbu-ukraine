@@ -4,6 +4,7 @@ from .base import HashedItem
 
 
 class MbuItem(HashedItem):
+    location_name = scrapy.Field()
     order_no = scrapy.Field()
     map_url = scrapy.Field()
     order_date = scrapy.Field()

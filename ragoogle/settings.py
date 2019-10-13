@@ -86,7 +86,10 @@ HTTPCACHE_MONGODB_DB = MONGODB_DB
 HTTPCACHE_MONGODB_COLL = get_env_str("HTTPCACHE_MONGODB_COLL", "cache")
 
 
-ITEM_PIPELINES = {"ragoogle.pipelines.MongoDBPipeline": 9000}
+ITEM_PIPELINES = {
+    "ragoogle.pipelines.AddLocationNamePipeline": 8000,
+    "ragoogle.pipelines.MongoDBPipeline": 9000
+}
 
 EXTENSIONS = {
     "ragoogle.extensions.save_stats.SpiderSaveStatsOnFinish": 600,

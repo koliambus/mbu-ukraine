@@ -11,13 +11,14 @@ from ragoogle.loaders import StripJoinItemLoader
 
 
 class KharkivSpider(scrapy.Spider):
+    location_name = "Харків"
     name = "registry_uga_kharkov_ua"
     allowed_domains = ["registry.uga.kharkov.ua"]
     start_urls = ["http://registry.uga.kharkov.ua/server-response.php?_=1567368281378"]
     custom_settings = {
         # specifies exported fields and order
-        'FEED_EXPORT_FIELDS': ["number_in_order", "order_no", "order_date", "customer", "obj", "address", "changes",
-                               "cancellation", "scan_url"],
+        'FEED_EXPORT_FIELDS': ["location_name", "number_in_order", "order_no", "order_date", "customer", "obj",
+                               "address", "changes", "cancellation", "scan_url"],
     }
 
     def parse(self, response):

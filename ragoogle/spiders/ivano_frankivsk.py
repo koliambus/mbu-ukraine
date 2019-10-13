@@ -5,13 +5,14 @@ from ragoogle.loaders import StripJoinItemLoader
 
 
 class IvanoFrankivskSpider(scrapy.Spider):
+    location_name = "Івано-Франківськ"
     name = "ivano_frankivsk"
     allowed_domains = ["dma.if.ua"]
     start_urls = ["http://dma.if.ua/department/registries/mbuio/page/1/"]
     custom_settings = {
         # specifies exported fields and order
-        'FEED_EXPORT_FIELDS': [ "order_no", "order_date", "prescript_no", "prescript_date", "customer", "obj",
-                                "address", "changes", "cancellation", "scan_url"],
+        'FEED_EXPORT_FIELDS': ["location_name",  "order_no", "order_date", "prescript_no", "prescript_date", "customer",
+                               "obj", "address", "changes", "cancellation", "scan_url"],
     }
 
     def parse(self, response):

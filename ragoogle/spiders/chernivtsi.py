@@ -7,13 +7,14 @@ from ragoogle.loaders import StripJoinItemLoader
 
 
 class CSVChernivtsiSpider(CSVFeedSpider):
+    location_name = "Чернівці"
     name = "chernivtsi"
     allowed_domains = ["data.city.cv.ua"]
     start_urls = ["https://data.city.cv.ua/dataset/mistobudumovy"]
     custom_settings = {
         # specifies exported fields and order
-        'FEED_EXPORT_FIELDS': ["order_no", "order_date", "customer", "obj", "address", "changes", "cancellation",
-                               "scan_url", "status"]
+        'FEED_EXPORT_FIELDS': ["location_name", "order_no", "order_date", "customer", "obj", "address", "changes",
+                               "cancellation", "scan_url", "status"]
     }
 
     # at first get link to csv file, then call super().parse to proceed with CSV parsing

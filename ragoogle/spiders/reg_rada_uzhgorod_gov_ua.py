@@ -5,13 +5,14 @@ from ragoogle.loaders import StripJoinItemLoader
 
 
 class UzhorodSpider(scrapy.Spider):
+    location_name = "Ужгород"
     name = "reg_rada_uzhgorod_gov_ua"
     allowed_domains = ["reg.rada-uzhgorod.gov.ua/"]
     start_urls = ["http://reg.rada-uzhgorod.gov.ua/"]
     custom_settings = {
         # specifies exported fields and order
-        'FEED_EXPORT_FIELDS': ["order_no", "order_date", "customer", "obj", "address", "changes", "cancellation",
-                               "scan_url"],
+        'FEED_EXPORT_FIELDS': ["location_name", "order_no", "order_date", "customer", "obj", "address", "changes",
+                               "cancellation", "scan_url"],
     }
 
     def parse(self, response):

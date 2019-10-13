@@ -6,13 +6,14 @@ from ragoogle.loaders import StripJoinItemLoader
 
 
 class DniproSpider(scrapy.Spider):
+    location_name = "Дніпро"
     name = "dniprorada_gov_ua"
     allowed_domains = ["dniprorada.gov.ua"]
     start_urls = ["https://dniprorada.gov.ua/uk/page/reestr-mistobudivnih-umov-ta-obmezhen"]
     custom_settings = {
         # specifies exported fields and order
-        'FEED_EXPORT_FIELDS': ["number_in_order", "order_no", "order_date", "customer", "obj", "address", "changes",
-                               "cancellation", "scan_url", "scan_no", "scan_date"],
+        'FEED_EXPORT_FIELDS': ["location_name", "number_in_order", "order_no", "order_date", "customer", "obj",
+                               "address", "changes", "cancellation", "scan_url", "scan_no", "scan_date"],
     }
 
     def parse(self, response):

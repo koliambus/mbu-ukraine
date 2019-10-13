@@ -6,14 +6,15 @@ from ragoogle.loaders import StripJoinItemLoader
 
 
 class ZaporizhiaSpider(scrapy.Spider):
+    location_name = "Запоріжжя"
     name = "zp_gov_ua"
     allowed_domains = ["zp.gov.ua"]
     start_urls = ["https://zp.gov.ua/uk/page/reestr-mbutao"]
     custom_settings = {
         # specifies exported fields and order
-        'FEED_EXPORT_FIELDS': ["number_in_order", "order_no", "order_date", "customer", "obj", "address", "changes",
-                               "cancellation", "scan_url", "address_assign_date", "address_assign_no",
-                               "address_assign_url"],
+        'FEED_EXPORT_FIELDS': ["location_name", "number_in_order", "order_no", "order_date", "customer", "obj",
+                               "address", "changes", "cancellation", "scan_url", "address_assign_date",
+                               "address_assign_no", "address_assign_url"],
     }
 
     def parse(self, response):
@@ -91,6 +92,8 @@ class ZaporizhiaSpider(scrapy.Spider):
                                              "td:nth-child(9) p:nth-child(1) span a::attr(href)",
                                              "td:nth-child(9) a:nth-child(" + str(order_in_row + 1) + ")::attr(href)",
                                              "td:nth-child(9) a:nth-child(1)::attr(href)")
+
+                # TODO add decree found in 357th row
 
                 l.add_value("scan_url", response.urljoin(url))
 

@@ -9,13 +9,14 @@ from ragoogle.loaders import StripJoinItemLoader
 
 
 class CherkasySpider(scrapy.Spider):
+    location_name = "Черкаси"
     name = "cherkasy"
     allowed_domains = ["rada.ck.ua"]
     start_urls = ["http://rada.ck.ua/reestrmuo/"]
     custom_settings = {
         # specifies exported fields and order
-        'FEED_EXPORT_FIELDS': ["order_no", "order_date", "customer", "obj", "address", "changes", "cancellation",
-                               "scan_url"],
+        'FEED_EXPORT_FIELDS': ["location_name", "order_no", "order_date", "customer", "obj", "address", "changes",
+                               "cancellation", "scan_url"],
     }
 
     def parse(self, response):

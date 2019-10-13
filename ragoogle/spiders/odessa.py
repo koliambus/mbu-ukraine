@@ -10,14 +10,15 @@ from ragoogle.loaders import StripJoinItemLoader
 
 
 class OdessaSpider(scrapy.Spider):
+    location_name = "Одеса"
     name = "odessa"
     allowed_domains = ["service.ombk.odessa.ua"]
     start_urls = [
         "https://service.ombk.odessa.ua/arcgis/rest/services/GUO/GUO_PASPORT/MapServer/0/query?where=Kadastr2016.DBO.MBU.Data+BETWEEN+timestamp+%271991-08-24+21%3A00%3A00%27+AND+timestamp+%273000-01-01+20%3A59%3A59%27&text=&objectIds=&time=&geometry=&geometryType=esriGeometryEnvelope&inSR=&spatialRel=esriSpatialRelIntersects&relationParam=&outFields=&returnGeometry=false&returnTrueCurves=false&maxAllowableOffset=&geometryPrecision=&outSR=&having=&returnIdsOnly=true&returnCountOnly=false&orderByFields=&groupByFieldsForStatistics=&outStatistics=&returnZ=false&returnM=false&gdbVersion=&historicMoment=&returnDistinctValues=false&resultOffset=&resultRecordCount=&queryByDistance=&returnExtentOnly=false&datumTransformation=&parameterValues=&rangeValues=&quantizationParameters=&featureEncoding=esriDefault&f=pjson"]
     custom_settings = {
         # specifies exported fields and order
-        'FEED_EXPORT_FIELDS': ["number_in_order", "order_no", "order_date", "customer", "obj", "address", "changes",
-                               "cancellation", "scan_url", "additional_fields"],
+        'FEED_EXPORT_FIELDS': ["location_name", "number_in_order", "order_no", "order_date", "customer", "obj",
+                               "address", "changes", "cancellation", "scan_url", "additional_fields"],
     }
 
     # API has limit to get only 1000 entities per request

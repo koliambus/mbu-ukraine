@@ -5,13 +5,14 @@ from ragoogle.loaders import StripJoinItemLoader
 
 
 class PoltavaSpider(scrapy.Spider):
+    location_name = "Полтава"
     name = "poltava"
     allowed_domains = ["mistobud.pythonanywhere.com"]
     start_urls = ["http://mistobud.pythonanywhere.com/list"]
     custom_settings = {
         # specifies exported fields and order
-        'FEED_EXPORT_FIELDS': ["order_no", "order_date", "customer", "obj", "address", "changes", "cancellation",
-                               "scan_url"],
+        'FEED_EXPORT_FIELDS': ["location_name", "order_no", "order_date", "customer", "obj", "address", "changes",
+                               "cancellation", "scan_url"],
     }
 
     def parse(self, response):

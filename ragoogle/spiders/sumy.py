@@ -7,13 +7,14 @@ from ragoogle.loaders import StripJoinItemLoader
 
 
 class SumySpider(scrapy.Spider):
+    location_name = "Суми"
     name = "sumy"
     allowed_domains = ["smr.gov.ua"]
     start_urls = ["https://www.smr.gov.ua/uk/dokumenti/mistobudivna-dokumentatsiya/mistobudivni-umovy-ta-obmezhennia.html"]
     custom_settings = {
         # specifies exported fields and order
-        'FEED_EXPORT_FIELDS': ["order_no", "order_date", "customer", "obj", "address", "changes_text", "changes_date",
-                               "changes_order_no", "cancellation", "cancellation_url", "scan_url"],
+        'FEED_EXPORT_FIELDS': ["location_name", "order_no", "order_date", "customer", "obj", "address", "changes_text",
+                               "changes_date", "changes_order_no", "cancellation", "cancellation_url", "scan_url"],
     }
 
     def parse(self, response):

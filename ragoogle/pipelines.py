@@ -32,3 +32,11 @@ class MongoDBPipeline(object):
         collection.update_one({"_id": item.get_doc_hash()}, item.get_update_clause(), upsert=True)
 
         return item
+
+
+class AddLocationNamePipeline(object):
+    def process_item(self, item, spider):
+        if spider.location_name and item.fields.get('location_name') is not None:
+            item['location_name'] = spider.location_name
+
+        return item

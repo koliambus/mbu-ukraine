@@ -5,13 +5,14 @@ from ragoogle.loaders import StripJoinItemLoader
 
 
 class KhmelnytskyiSpider(scrapy.Spider):
+    location_name = "Хмельницький"
     name = "khmelnytskyi"
     allowed_domains = ["mycity.khm.gov.ua"]
     start_urls = ["https://mycity.khm.gov.ua/OpenData/MtoRegister"]
     custom_settings = {
         # specifies exported fields and order
-        'FEED_EXPORT_FIELDS': [ "order_no", "order_date", "customer", "obj", "obj_purpose", "address_street",
-                                "address_street_number", "cancellation", "scan_url"],
+        'FEED_EXPORT_FIELDS': ["location_name",  "order_no", "order_date", "customer", "obj", "obj_purpose",
+                               "address_street", "address_street_number", "cancellation", "scan_url"],
     }
 
     def parse(self, response):

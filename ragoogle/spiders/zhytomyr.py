@@ -10,6 +10,7 @@ from ragoogle.loaders import StripJoinItemLoader
 
 
 class ZhytomyrSpider(scrapy.spiders.CSVFeedSpider):
+    location_name = "Житомир"
     name = "zhytomyr"
     allowed_domains = ["zt-rada.gov.ua"]
     start_urls = [
@@ -17,8 +18,8 @@ class ZhytomyrSpider(scrapy.spiders.CSVFeedSpider):
     ]
     custom_settings = {
         # specifies exported fields and order
-        'FEED_EXPORT_FIELDS': ["order_no", "order_date", "customer", "obj", "address", "changes", "cancellation",
-                               "scan_url"],
+        'FEED_EXPORT_FIELDS': ["location_name", "order_no", "order_date", "customer", "obj", "address", "changes",
+                               "cancellation", "scan_url"],
     }
     item_loaders = defaultdict(lambda: StripJoinItemLoader(item=MbuItem()))
 
