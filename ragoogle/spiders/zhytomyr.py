@@ -30,7 +30,6 @@ class ZhytomyrSpider(scrapy.spiders.CSVFeedSpider):
 
             # if row is not empty
             if row[1].value:
-                self.logger.debug("parse xls index : {}, row : {}".format(index, row))
                 order_no = row[0].value.replace('№', '').strip()
                 l = self.get_item(order_no)
 
@@ -60,15 +59,16 @@ class ZhytomyrSpider(scrapy.spiders.CSVFeedSpider):
                 self.logger.info("xls document found : {}".format(document_url))
                 yield response.follow(document_url, callback=self.parse_xls_and_flush, priority=10)  # big priority to run last
             else:
-                self.logger.debug("parse site row : {}".format(row.get()))
-                order_no = "".join(row.css("div:nth-child(1)::text").re(r"№ ?(.*)")).strip()
-                l = self.get_item(order_no)
-                l.selector = row
+                continue
+                # self.logger.debug("parse site row : {}".format(row.get()))
+                # order_no = "".join(row.css("div:nth-child(1)::text").re(r"№ ?(.*)")).strip()
+                # l = self.get_item(order_no)
+                # l.selector = row
 
-                l.add_value("order_no", order_no)
-                l.add_xpath("order_date", "./@data-year")
+                # l.add_value("order_no", order_no)
+                # l.add_xpath("order_date", "./@data-year")
 
-                l.add_value("scan_url", response.urljoin(document_url))
+                # l.add_value("scan_url", response.urljoin(document_url))
 
         next_page_link = response.xpath('//*[@id="tp6"]//ul/li[@class="active"]/following-sibling::li[1]/a/@href').get()
         if next_page_link:

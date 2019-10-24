@@ -11,12 +11,11 @@ class MongoDBPipeline(object):
                 settings["MONGODB_USERNAME"],
                 settings["MONGODB_PASSWORD"],
                 settings["MONGODB_HOST"],
-                settings["MONGODB_PORT"]
+                settings["MONGODB_PORT"],
             )
         else:
             uri = "mongodb://{}:{}".format(
-                settings["MONGODB_HOST"],
-                settings["MONGODB_PORT"]
+                settings["MONGODB_HOST"], settings["MONGODB_PORT"]
             )
 
         self.connection = pymongo.MongoClient(
@@ -27,16 +26,23 @@ class MongoDBPipeline(object):
         self.db = self.connection[settings["MONGODB_DB"]]
 
     def process_item(self, item, spider):
-        collection = self.db[spider.name]
+        collection_name = getattr(spider, "mongo_collection", spider.name)
+        collection = self.db[collection_name]
 
-        collection.update_one({"_id": item.get_doc_hash()}, item.get_update_clause(), upsert=True)
+        collection.update_one(
+            {"_id": item.get_doc_hash()}, item.get_update_clause(), upsert=True
+        )
 
         return item
 
 
 class AddLocationNamePipeline(object):
     def process_item(self, item, spider):
-        if spider.location_name and item.fields.get('location_name') is not None and len(item.values()):
-            item['location_name'] = spider.location_name
+        if (
+            getattr(spider, "location_name", None) is not None
+            and item.fields.get("location_name") is not None
+            and len(item.values())
+        ):
+            item["location_name"] = spider.location_name
 
         return item

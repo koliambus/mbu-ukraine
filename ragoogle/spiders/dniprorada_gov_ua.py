@@ -31,7 +31,7 @@ class DniproSpider(scrapy.Spider):
                       re=r"(\d{1,2}[\. /]?\d{1,2}[\. /]?\d{2,4})[\sр\.]*")
             l.add_css("customer", "td:nth-child(3)::text")
             l.add_css("obj", "td:nth-child(4)::text")
-            l.add_css("address", "td:nth-child(5)::text")
+            l.add_css("address", "td:nth-child(5)::text, td:nth-child(5) a::text")
             l.add_css("changes", "td:nth-child(6)::text")
             l.add_css("cancellation", "td:nth-child(7)::text")
 
@@ -42,4 +42,10 @@ class DniproSpider(scrapy.Spider):
             l.add_css("scan_no", "td:nth-child(8) a::text", re=r"№(.*) ?від")
             l.add_css("scan_date", "td:nth-child(8) a::text", re=r"від ?(.*)")
 
-            yield l.load_item()
+            item = l.load_item()
+            if not item.get("number_in_order"):
+                continue
+
+            yield item
+
+

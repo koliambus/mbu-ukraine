@@ -32,7 +32,7 @@ class MykolaivSpider(scrapy.Spider):
             l.add_value("order_no", re.search('^\\s?№? ?(.*)\\s?(в?ід|dsl)', date_order).group(1))
             l.add_css("order_date", "td:nth-child(2) p span::text, td:nth-child(2) span::text, td:nth-child(2)::text",
                       re=r"(\d{1,2}[\. /]?\d{1,2}[\. /]?\d{2,4})\s*$")
-            l.add_css("customer", "td:nth-child(3) span::text, td:nth-child(3)::text")
+            l.add_css("customer", "td:nth-child(3) span::text, td:nth-child(3)::text, td:nth-child(3) p::text")
             l.add_css("obj", "td:nth-child(4) span::text, td:nth-child(4)::text")
             l.add_css("address", "td:nth-child(5) span::text, td:nth-child(5) p::text, td:nth-child(5)::text")
             l.add_css("changes", "td:nth-child(6) span::text, td:nth-child(6)::text")

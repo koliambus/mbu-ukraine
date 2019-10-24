@@ -3,17 +3,29 @@ import scrapy
 import re
 from ragoogle.items.geo_lutskarada_gov_ua import MbuItem
 from ragoogle.loaders import StripJoinItemLoader
+from .base import ProxyMeshSpiderMixin
 
 
-class LutskSpider(scrapy.Spider):
+class LutskSpider(scrapy.Spider, ProxyMeshSpiderMixin):
     location_name = "Луцьк"
     name = "geo_lutskarada_gov_ua"
     allowed_domains = ["geo.lutskrada.gov.ua"]
     start_urls = ["http://geo.lutskrada.gov.ua/ua/register_mc/page=1"]
     custom_settings = {
         # specifies exported fields and order
-        'FEED_EXPORT_FIELDS': ["location_name", "order_no", "order_date", "customer", "obj", "address", "changes",
-                               "cadastre_number", "document_status", "scan_url", "map_url"],
+        "FEED_EXPORT_FIELDS": [
+            "location_name",
+            "order_no",
+            "order_date",
+            "customer",
+            "obj",
+            "address",
+            "changes",
+            "cadastre_number",
+            "document_status",
+            "scan_url",
+            "map_url",
+        ]
     }
 
     def parse(self, response):
@@ -37,8 +49,12 @@ class LutskSpider(scrapy.Spider):
             yield l.load_item()
 
         # if 'Next' page label present continue crawling
-        if response.css('ul.pagination li a[aria-label=Next]').get():
-            yield scrapy.Request(self.get_next_page(response), callback=self.parse)
+        if response.css("ul.pagination li a[aria-label=Next]").get():
+            yield scrapy.Request(
+                self.get_next_page(response),
+                callback=self.parse,
+                meta={"proxy": self.get_random_proxy()},
+            )
 
     def get_next_page(self, response):
         page_selector = "/page=([0-9].*)"
@@ -50,8 +66,20 @@ class LutskSpider(scrapy.Spider):
         selected_pagination = re.search(page_selector, request_url)
         if selected_pagination:
             current_page = selected_pagination.group(1)
-            base_url = request_url[:selected_pagination.span()[0]]
+            base_url = request_url[: selected_pagination.span()[0]]
 
         next_page = base_url + "/page=" + str(int(current_page) + 1)
-        self.logger.info("Calculated next page : [{}] from current : [{}]".format(next_page, response.url))
+        self.logger.info(
+            "Calculated next page : [{}] from current : [{}]".format(
+                next_page, response.url
+            )
+        )
         return response.urljoin(next_page)
+
+    def start_requests(self):
+        for url in self.start_urls:
+            yield scrapy.Request(
+                    url,
+                    callback=self.parse,
+                    meta={"proxy": self.get_random_proxy()},
+                )

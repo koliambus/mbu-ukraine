@@ -19,15 +19,14 @@ class VinnytsiaSpider(scrapy.Spider):
 
     def parse(self, response):
         for row in response.css('table.ms-listviewtable tr[class^=building-registry-row]'):
-            self.logger.debug("parse row : {}".format(row.get()))
             l = StripJoinItemLoader(item=MbuItem(), selector=row)
             l.add_css("order_no", "td:nth-child(1)::text")
             l.add_css("number_in_order", "td:nth-child(2)::text")
             l.add_css("order_date", "td:nth-child(3)::text")
             l.add_css("decree_no", "td:nth-child(4)::text")
-            l.add_css("customer", "td:nth-child(5) div::text")
-            l.add_css("obj", "td:nth-child(6) div::text")
-            l.add_css("address", "td:nth-child(7) div::text")
+            l.add_css("customer", "td:nth-child(5)::text, td:nth-child(5) div::text")
+            l.add_css("obj", "td:nth-child(6)::text, td:nth-child(6) div::text")
+            l.add_css("address", "td:nth-child(7)::text, td:nth-child(7) div::text")
             l.add_css("changes", "td:nth-child(8) div::text")
             l.add_css("cancellation", "td:nth-child(9) div::text")
 
@@ -40,7 +39,6 @@ class VinnytsiaSpider(scrapy.Spider):
         # get next page number href next to current inactive with span tag
         nextPageJs = response.xpath('//table[@class="ms-listviewtable"]//tr[@class="building-registry-pager"]//table/tr/td[.//span]/following-sibling::td[1]/a/@href')
         if len(nextPageJs):
-            self.logger.debug("next page action found : {}".format(nextPageJs))
             yield FormRequest.from_response(
                 response,
                 formname="aspnetForm",

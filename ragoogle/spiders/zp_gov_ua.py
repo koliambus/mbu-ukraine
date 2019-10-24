@@ -22,10 +22,8 @@ class ZaporizhiaSpider(scrapy.Spider):
         for index, row in enumerate(response.css("table tbody tr")):
             # first and second are headers, skip
             if index == 0 or index == 1:
-                self.logger.debug("skipped index = {}, row : {}".format(index, row.get()))
                 continue
 
-            self.logger.debug("parse index = {}, row : {}".format(index, row.get()))
             orders_in_row = len(row.css("td:nth-child(3) p").getall())
 
             if orders_in_row == 0:
@@ -43,7 +41,6 @@ class ZaporizhiaSpider(scrapy.Spider):
                             .format(order_in_row + 1, order_in_row + 1)).get()
 
                 if not order_no:
-                    self.logger.debug("skipped {}th order in row, row index : {}, row : {}".format(order_in_row + 1, index, row.get()))
                     continue
 
                 l.add_value("order_no", order_no)

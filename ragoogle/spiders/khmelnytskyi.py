@@ -26,6 +26,8 @@ class KhmelnytskyiSpider(scrapy.Spider):
             l.add_css("obj_purpose", "td:nth-child(7)::text")
             l.add_css("address_street", "td:nth-child(2)::text")
             l.add_css("address_street_number", "td:nth-child(3)::text")
+            l.add_css("address", "td:nth-child(2)::text")
+            l.add_css("address", "td:nth-child(3)::text")
             l.add_css("cancellation", "td:nth-child(8)::text")
 
             url = row.css("td:nth-child(9) a::attr(href)").extract_first()

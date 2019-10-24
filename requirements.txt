@@ -9,3 +9,4 @@ glob2==0.6
 scrapy-crawlera==1.5.0
 GitPython==2.0.9
 scrapy-crawlera==1.5.0
+xlrd==1.2.0
